@@ -8,6 +8,7 @@ var path = require('path');
 var assert = require('assert');
 var fhmongodb = require("../lib/fhmongodb.js");
 var mongodb = require('mongodb');
+var ObjectId = mongodb.ObjectID;
 var Server = mongodb.Server;
 var ditchhandler = require("../lib/ditcher.js");
 var async = require('async');
@@ -195,13 +196,16 @@ function createTestData(cfg, testTopic, callback) {
           foo : 'foo',
           num1 : 100,
           num2 : 300,
-          liker : '123'
+          liker : '123',
+          id: ObjectId('59149a3381f689c10dc18829'),
+          date: new Date('2017-05-23')
         }, {
           idx : 2,
           foo : 'bar',
           num1 : 110,
           num2 : 600,
-          liker : 'abcdef'
+          liker : 'abcdef',
+          date: new Date('2017-06-23')
         }, {
           idx : 3,
           foo : 'foobar',
@@ -219,7 +223,7 @@ function createTestData(cfg, testTopic, callback) {
           foo : 'foo',
           num1 : 140,
           num2 : 400,
-      liker : '123abcdef'
+          liker : '123abcdef'
         }
       ], function(err, data) {
         assert.ok(!err, "Received error hen setting up test data: " + err);
@@ -412,6 +416,12 @@ var testBasicOperationsOwnDatabase = function(cb){
                   testList9,
                   testList10,
                   testList11,
+                  testList12,
+                  testList13,
+                  testList14,
+                  testList15,
+                  testList16,
+                  testList17,
                   testListLimit,
                   testListSkip,
                   testListSort,
@@ -820,6 +830,153 @@ var testList11 = function (cb) {
   ditch.doList(doListRequest, function (err, listGtltRes) {
     assert.equal(listGtltRes.length, 1);
     assert.equal(listGtltRes[0].fields.idx, 2);
+    cb();
+  });
+};
+
+var testList12 = function (cb) {
+  logger.info("test testList12()");
+
+  var doListRequest = {
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "eq": {
+      "id": { value: "59149a3381f689c10dc18829", type: "ObjectId" }
+    }
+  };
+
+  if (useOwnDatabase) {
+    doListRequest.__dbperapp = true;
+  }
+
+  ditch.doList(doListRequest, function (err, listEqRes) {
+    assert.equal(listEqRes.length, 1);
+    cb();
+  });
+};
+
+var testList13 = function (cb) {
+  logger.info("test testList12()");
+
+  var doListRequest = {
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "ne": {
+      "id": { value: "59149a3381f689c10dc18829", type: "ObjectId" }
+    }
+  };
+
+  if (useOwnDatabase) {
+    doListRequest.__dbperapp = true;
+  }
+
+  ditch.doList(doListRequest, function (err, listNeqRes) {
+    assert.equal(listNeqRes.length, 4);
+    cb();
+  });
+};
+
+var testList14 = function (cb) {
+  logger.info("test testList12()");
+
+  var doListRequest = {
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "eq": {
+      "date": { value: "2017-05-23T00:00:00.000Z", type: "Date" }
+    }
+  };
+
+  if (useOwnDatabase) {
+    doListRequest.__dbperapp = true;
+  }
+
+  ditch.doList(doListRequest, function (err, listEqRes) {
+    assert.equal(listEqRes.length, 1);
+    cb();
+  });
+};
+
+var testList15 = function (cb) {
+  logger.info("test testList12()");
+
+  var doListRequest = {
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "ne": {
+      "date": { value: "2017-05-23T00:00:00.000Z", type: "Date" }
+    }
+  };
+
+  if (useOwnDatabase) {
+    doListRequest.__dbperapp = true;
+  }
+
+  ditch.doList(doListRequest, function (err, listNeqRes) {
+    assert.equal(listNeqRes.length, 4);
+    cb();
+  });
+};
+
+var testList16 = function (cb) {
+  logger.info("test testList12()");
+
+  var doListRequest = {
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "gt": {
+      "date": { value: "2017-05-23T00:00:00.000Z", type: "Date" }
+    }
+  };
+
+  if (useOwnDatabase) {
+    doListRequest.__dbperapp = true;
+  }
+
+  ditch.doList(doListRequest, function (err, listGtRes) {
+    assert.equal(listGtRes.length, 1);
+    cb();
+  });
+};
+
+var testList17 = function (cb) {
+  logger.info("test testList12()");
+
+  var doListRequest = {
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "eq": {
+      "foo": { value: "bar", type: "Any" }
+    }
+  };
+
+  if (useOwnDatabase) {
+    doListRequest.__dbperapp = true;
+  }
+
+  ditch.doList(doListRequest, function (err, listEqRes) {
+    assert.equal(listEqRes.length, 2);
+    cb();
+  });
+};
+
+var testList18 = function (cb) {
+  logger.info("test testList12()");
+
+  var doListRequest = {
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "ne": {
+      "foo": { value: "bar", type: "Any" }
+    }
+  };
+
+  if (useOwnDatabase) {
+    doListRequest.__dbperapp = true;
+  }
+
+  ditch.doList(doListRequest, function (err, listNeqRes) {
+    assert.equal(listNeqRes.length, 3);
     cb();
   });
 };
